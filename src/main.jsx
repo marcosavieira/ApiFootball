@@ -1,10 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { SignIn } from "./Pages/SignIn";
 import "./index.css";
+import { MainRoutes } from "./MainRoutes.jsx";
+import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
  <React.StrictMode>
-  <SignIn />
+  <BrowserRouter>
+   <MainRoutes />
+  </BrowserRouter>
  </React.StrictMode>
 );

@@ -8,7 +8,7 @@ export const getStatus = async (data) => {
     "x-rapidapi-host": "v3.football.api-sports.io",
    },
   });
-
+  localStorage.setItem("apiKey", `${data.apiKey}`);
   return response.data;
  } catch (error) {
   console.error(error);
