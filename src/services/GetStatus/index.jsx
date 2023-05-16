@@ -1,6 +1,6 @@
 import { API } from "../api";
 
-export const getStatus = async (data) => {
+export const GetStatus = async (data) => {
  try {
   const response = await API.get("/status", {
    headers: {
@@ -8,7 +8,10 @@ export const getStatus = async (data) => {
     "x-rapidapi-host": "v3.football.api-sports.io",
    },
   });
-  localStorage.setItem("apiKey", `${data.apiKey}`);
+  if (response.status === 200) {
+   localStorage.setItem("apiKey", `${data.apiKey}`);
+  }
+
   return response.data;
  } catch (error) {
   console.error(error);

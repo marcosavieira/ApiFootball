@@ -1,11 +1,16 @@
+import { useNavigate } from "react-router-dom";
+import { GetStatus } from "../../services/getStatus";
 import style from "./style.module.css";
 import { useForm } from "react-hook-form";
-import { getStatus } from "../../services/getStatus";
 
 export const SignIn = () => {
  const { register, handleSubmit } = useForm();
+ const navigate = useNavigate();
  const onSubmit = async (data) => {
-  getStatus(data);
+  GetStatus(data);
+  if (localStorage.getItem("apiKey") !== "") {
+   navigate("/home");
+  }
  };
 
  return (
