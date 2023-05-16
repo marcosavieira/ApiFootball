@@ -1,10 +1,22 @@
 import style from "./style.module.css";
 import { useForm } from "react-hook-form";
+import { API } from "../../services/api";
 
 export const SignIn = () => {
  const { register, handleSubmit } = useForm();
- const onSubmit = (data) => {
-  console.log(data);
+ const onSubmit = async (data) => {
+  try {
+   const response = await API.get("/status", {
+    headers: {
+     "x-rapidapi-key": `${data.apiKey}`,
+     "x-rapidapi-host": "v3.football.api-sports.io",
+    },
+   });
+
+   return response.data;
+  } catch (error) {
+   console.error(error);
+  }
  };
 
  return (
