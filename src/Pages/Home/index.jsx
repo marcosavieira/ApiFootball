@@ -1,11 +1,8 @@
-import Autocomplete from "@mui/material/Autocomplete";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
 import { useState, useEffect } from "react";
 import { API } from "../../services/api";
 import style from "./style.module.css";
 import { useForm, Controller } from "react-hook-form";
-import Select from "react-select";
+import AsyncSelect, { useAsync } from "react-select/async";
 
 export const Home = () => {
  const { control, handleSubmit } = useForm();
@@ -14,109 +11,44 @@ export const Home = () => {
  const apiKey = localStorage.getItem("apiKey");
 
  const getCountries = async () => {
+  //fake: demo7870822.mockable.io
+  //correct: v3.football.api-sports.io
   try {
    const response = await API.get("/countries", {
     headers: {
      "x-rapidapi-key": `${apiKey}`,
-     "x-rapidapi-host": "v3.football.api-sports.io",
+     "x-rapidapi-host": "demo7870822.mockable.io",
     },
    });
-   setCountriesList(response.data.response);
-   return response.data;
+   const data = response.data.response;
+   setCountriesList(data);
+   const options = data.map((item) => ({
+    value: item.name,
+    label: item.name,
+   }));
+   return options;
   } catch (error) {
    console.log("", error);
   }
  };
  useEffect(() => {
   getCountries();
-  setSelectedCountry(/* updatedOptions */ "Brazil");
  }, []);
 
- const getLeagues = async (country) => {
-  try {
-   const response = await API.get(`/leagues?country=${country}`, {
-    headers: {
-     "x-rapidapi-key": `${apiKey}`,
-     "x-rapidapi-host": "v3.football.api-sports.io",
-    },
-   });
-   return response.data;
-  } catch (error) {
-   console.log("", error);
-  }
- };
- useEffect(() => {
-  getLeagues(selectedCountry.toLocaleLowerCase());
- });
- const handleChangeCountry = (event, value) => {
-  const updatedOptions = countriesList.map((option) => ({
-   ...option,
-   selected: option.name === value?.name,
-  }));
-
-  setSelectedCountry(/* updatedOptions */ "Brazil");
-  //if (selectedCountry !== "") {
-  getLeagues(selectedCountry);
-  // }
- };
-
- const onSubmit = (data) => {
-  console.log(data);
- };
-
+ const { isLoading, data, error } = useAsync(getCountries);
  return (
   <div className={style.container}>
-   <form onSubmit={handleSubmit(onSubmit)}>
-    <Autocomplete
-     id="country-select-demo"
-     sx={{ width: 300 }}
-     options={countriesList}
-     autoHighlight
-     getOptionLabel={(option) => option.name}
-     onChange={handleChangeCountry}
-     renderOption={(props, option) => (
-      <Box
-       component="li"
-       sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-       {...props}
-      >
-       <img
-        loading="lazy"
-        width="20"
-        src={option.flag}
-        srcSet={option.flag}
-        alt=""
-       />
-       {option.name}
-      </Box>
-     )}
-     renderInput={(params) => (
-      <TextField
-       {...params}
-       label="Selecione o país"
-       inputProps={{
-        ...params.inputProps,
-       }}
-      />
-     )}
+   <div className={style.navBarCountries}>
+    <label>Países</label>
+    <AsyncSelect
+     cacheOptions
+     defaultOptions
+     loadOptions={getCountries}
+     isLoading={isLoading}
+     options={data}
+     isClearable
     />
-    <label>Leagues</label>
-    <Controller
-     name="leagues"
-     render={({ field }) => (
-      <Select
-       {...field}
-       options={[
-        { value: "chocolate", label: "Chocolate" },
-        { value: "strawberry", label: "Strawberry" },
-        { value: "vanilla", label: "Vanilla" },
-       ]}
-      />
-     )}
-     control={control}
-     defaultValue=""
-    />
-   </form>
+   </div>
   </div>
  );
 };
